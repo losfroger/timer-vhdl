@@ -72,9 +72,26 @@ signal act_sonido : std_logic := '0';
 signal SMin : std_logic_vector (3 downto 0) := "0000";
 signal SSec : std_logic_vector (5 downto 0) := "000000";
 
+
+signal iMin : std_logic_vector (3 downto 0) := "0000";
+signal iSec : std_logic_vector (5 downto 0) := "000000";
+
 begin
 	
-	FSM : FSM_timer port map (start, clk, min, sec, segPaso, act_timer, act_sonido, SMin, SSec);
+	process (min, sec)
+	begin	
+		if (min > "1001") then
+			iMin <= "1001";
+		end if;
+		if (sec > "111011") then
+			iSec <= "111011";
+		end if;
+	
+	end process;
+	
+	
+	--sonido
+	FSM : FSM_timer port map (start, clk, iMin, iSec, segPaso, act_timer, sonido, SMin, SSec);
 	-- 1 segundo = 001011101011101011101000000
 	timeProg : Timer_Prog port map ("000000000000000000000000100", clk, act_timer, segPaso);
 	splitter : sec_splitter port map (SSec, SigSB, SigSC);
