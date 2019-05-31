@@ -10,6 +10,9 @@ entity timer is
 	sec : in std_logic_vector (5 downto 0);
 	
 	sonido : out std_logic;
+	button : out std_logic;
+	segActivado : out std_logic;
+	timerActivado : out std_logic;
 	
 	--7 segmentos
 	SsA, SsB, SsC : out std_logic_vector (6 downto 0)
@@ -29,12 +32,12 @@ component sec_splitter is
 end component;
 
 component Timer_Prog is
-	generic(n:integer:=27);
-	port(
-		k : in std_logic_vector(n-1 downto 0);
-		CLK, RST : in std_logic ;
-		Z : out std_logic
-		);
+port(
+rst : in std_logic; --reset
+clk : in std_logic; --reloj
+number : std_logic_vector (25 downto 0);
+s : out std_logic --Pulso del segundo
+);
 end component;
 
 component S_seg is 
@@ -76,24 +79,35 @@ signal SSec : std_logic_vector (5 downto 0) := "000000";
 signal iMin : std_logic_vector (3 downto 0) := "0000";
 signal iSec : std_logic_vector (5 downto 0) := "000000";
 
+--signal button : std_logic := '0';
+
 begin
 	
 	process (min, sec)
 	begin	
 		if (min > "1001") then
 			iMin <= "1001";
+		else
+			iMin <= min;
 		end if;
 		if (sec > "111011") then
 			iSec <= "111011";
+		else
+			iSec <= sec;
 		end if;
 	
 	end process;
 	
 	
 	--sonido
-	FSM : FSM_timer port map (start, clk, iMin, iSec, segPaso, act_timer, sonido, SMin, SSec);
-	-- 1 segundo = 001011101011101011101000000
-	timeProg : Timer_Prog port map ("000000000000000000000000100", clk, act_timer, segPaso);
+	button <= start;
+	segActivado <= segPaso;
+	
+	timerActivado <= act_timer;
+	
+	FSM : FSM_timer port map (start, clk, iMin, iSec, segPaso, act_timer, act_sonido, SMin, SSec);
+	-- 1 segundo = 10111110101111000010000000
+	timeProg : Timer_Prog port map (act_timer,clk,"00000000000000000000001000",segPaso);
 	splitter : sec_splitter port map (SSec, SigSB, SigSC);
 	
 	S_segA : S_seg port map (SMin, SsA);

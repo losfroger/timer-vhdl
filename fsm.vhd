@@ -25,22 +25,22 @@ signal Qn, Qp : std_logic_vector(3 downto 0) := "0000";
 signal minAux : std_logic_vector (3 downto 0) := "0000";
 signal secAux : std_logic_vector (5 downto 0) := "000000";
 
-signal restador : std_logic_vector (5 downto 0) := "000000";
+--signal restador : std_logic_vector (5 downto 0) := "000000";
 
 begin
 	process (Qp, min, sec, start, secPassed)
 	begin
-		restador <= (secAux - '1');
+		--restador <= (secAux - '1');
 		case Qp is
 			--Estado inicial
 			when "0000" =>
 			secAux <= sec;
 			minAux <= min;
 			
-			act_timer <= '0';
-			act_sonido <= '0';
+			act_timer <= '1';
+			act_sonido <= '1';
 			
-			if (start = '1') then
+			if (start = '0') then
 				Qn <= "0001";
 			else
 				Qn <= Qp;
@@ -48,12 +48,15 @@ begin
 				
 			--Estado de conteo hacia abajo (segundos)
 			when "0001" =>	
-			act_timer <= '1';
-			act_sonido <= '0';
+			act_timer <= '0';
+			act_sonido <= '1';
 			
 			if (secPassed = '1') then
-				secAux <= restador;
+				secAux <= secAux - "000001";
+			else
+				secAux <= secAux;
 			end if;
+			
 			if (secAux = "000000") then
 				Qn <= "0010";
 			else
@@ -61,11 +64,11 @@ begin
 			end if;
 			
 			when "0010" =>
-			act_timer <= '1';
-			act_sonido <= '0';
+			act_timer <= '0';
+			act_sonido <= '1';
 			
 			--Se acabo el tiempo
-			if (minAux = 0 and secAux = 0) then
+			if (minAux = "000000" and secAux = "000000") then
 				Qn <= "0011";
 			else
 				minAux <= minAux - "0001";
@@ -74,21 +77,23 @@ begin
 			end if;
 			
 			when "0011" =>
-			act_timer <= '0';
-			act_sonido <= '1';
+			act_timer <= '1';
+			act_sonido <= '0';
 			
 			
 			when others =>
 			Qn <= "0000";
-			act_timer <= '0';
-			act_sonido <= '0';	
+			act_timer <= '1';
+			act_sonido <= '1';	
 			end case;
 			
 	end process;
-	process(clk, secPassed, restador, secAux)
+	process(clk, Qn)
 	begin
 		if (rising_edge(CLK)) then
 			Qp <= Qn;
+		else
+		
 		end if;
 	end process;
 	min_out <= minAux;
