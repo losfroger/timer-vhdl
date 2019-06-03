@@ -101,7 +101,7 @@ begin
 	
 	--sonido
 	button <= start;
-	segActivado <= segPaso;
+	segActivado <= act_sonido;
 	
 	timerActivado <= act_timer;
 	sonido <= act_sonido;
