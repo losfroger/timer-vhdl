@@ -18,7 +18,7 @@ end Timer_Prog;
 architecture simple of Timer_Prog is
 	signal Qn, Qp : std_logic_vector (25 downto 0);
 begin
-	combinacional : process(Qp)
+	combinacional : process(Qp, number)
 	begin
 		if (Qp = "00000000000000000000000000") then
 			s <= '1';
@@ -29,7 +29,7 @@ begin
 		end if;
 	end process combinacional;
 	
-	secuencial : process(rst,clk)
+	secuencial : process(rst,clk, number)
 	begin
 		if (rst = '1') then
 			Qp <= number;

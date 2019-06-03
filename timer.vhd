@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std;
 
-entity timer is
+entity Temporizador is
 	port(
 	clk, start : in std_logic;
 	
@@ -18,9 +18,9 @@ entity timer is
 	SsA, SsB, SsC : out std_logic_vector (6 downto 0)
 	
 	);
-end timer;
+end Temporizador;
 
-architecture behaviour of timer is
+architecture behaviour of Temporizador is
 
 component sec_splitter is 
 	port(
@@ -104,10 +104,11 @@ begin
 	segActivado <= segPaso;
 	
 	timerActivado <= act_timer;
+	sonido <= act_sonido;
 	
 	FSM : FSM_timer port map (start, clk, iMin, iSec, segPaso, act_timer, act_sonido, SMin, SSec);
 	-- 1 segundo = 10111110101111000010000000
-	timeProg : Timer_Prog port map (act_timer,clk,"00000000000000000000001000",segPaso);
+	timeProg : Timer_Prog port map (act_timer,clk,"10111110101111000010000000",segPaso);
 	splitter : sec_splitter port map (SSec, SigSB, SigSC);
 	
 	S_segA : S_seg port map (SMin, SsA);

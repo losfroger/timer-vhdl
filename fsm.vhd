@@ -25,10 +25,14 @@ signal Qn, Qp : std_logic_vector(3 downto 0) := "0000";
 signal minAux : std_logic_vector (3 downto 0) := "0000";
 signal secAux : std_logic_vector (5 downto 0) := "000000";
 
+signal minAuxB : std_logic_vector (3 downto 0) := "0000";
+signal secAuxB : std_logic_vector (5 downto 0) := "000000";
+														  
+
 --signal restador : std_logic_vector (5 downto 0) := "000000";
 
 begin
-	process (Qp, min, sec, start, secPassed)
+	process (Qp, min, sec, start, secPassed, secAuxB, minAuxB,clk)
 	begin
 		--restador <= (secAux - '1');
 		case Qp is
@@ -52,12 +56,12 @@ begin
 			act_sonido <= '1';
 			
 			if (secPassed = '1') then
-				secAux <= secAux - "000001";
+				secAux <= secAuxB - '1';
 			else
-				secAux <= secAux;
+				secAux <= secAuxB;
 			end if;
 			
-			if (secAux = "000000") then
+			if (secAuxB = "000000") then
 				Qn <= "0010";
 			else
 				Qn <= Qp;
@@ -68,10 +72,10 @@ begin
 			act_sonido <= '1';
 			
 			--Se acabo el tiempo
-			if (minAux = "000000" and secAux = "000000") then
+			if (minAuxB = "0000" and secAuxB = "000000") then
 				Qn <= "0011";
 			else
-				minAux <= minAux - "0001";
+				minAux <= minAuxB - "0001";
 				secAux <= "111011";
 				Qn <= "0001";
 			end if;
@@ -88,14 +92,17 @@ begin
 			end case;
 			
 	end process;
-	process(clk, Qn)
+	process(clk, Qn, minAux , secAux)
 	begin
 		if (rising_edge(CLK)) then
 			Qp <= Qn;
+			min_out <= minAux;
+			sec_out <= secAux;
+			minAuxB <= minAux;
+			secAuxB <= secAux;	
 		else
 		
 		end if;
 	end process;
-	min_out <= minAux;
-	sec_out <= secAux;
+	
 end behavior;
