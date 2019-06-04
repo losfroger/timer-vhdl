@@ -1,11 +1,11 @@
 library IEEE;
-use IEEE.std_logic_1164.all; 
+use IEEE.std_logic_1164.all;
 use IEEE.std_logic_arith.all;
 use IEEE.std_logic_unsigned.all;
 
---"10111110101111000010000000"
+--1 segundo = "10111110101111000010000000"
 
-
+--Timer programable, manda una senial cada que pasa el numero de iteraciones indicada
 entity Timer_Prog is
 port(
 rst : in std_logic; --reset
@@ -28,7 +28,7 @@ begin
 			Qn <= Qp - 1;
 		end if;
 	end process combinacional;
-	
+
 	secuencial : process(rst,clk, number)
 	begin
 		if (rst = '1') then

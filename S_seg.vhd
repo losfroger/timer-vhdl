@@ -1,10 +1,11 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 
-entity S_seg is 
+--Codigo de siete segmentos
+entity S_seg is
 	port(
-	b : in std_logic_vector (3 downto 0);
-	s : out std_logic_vector(6 downto 0)
+	b : in std_logic_vector (3 downto 0); --Numero de 0 a 9 que se introduce
+	s : out std_logic_vector(6 downto 0)  --Codigo siete segmentos de output
 	);
 end S_seg;
 

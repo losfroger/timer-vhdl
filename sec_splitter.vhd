@@ -2,12 +2,14 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.std_logic_unsigned.all;
 
-entity sec_splitter is 
+--Divide el numero de segundos de 0 a 59 en las
+--decenas y unidades del numero
+entity sec_splitter is
 	port(
-	sec : in std_logic_vector (5 downto 0);
-	
-	dec: out std_logic_vector (3 downto 0);
-	uni: out std_logic_vector (3 downto 0)
+	sec : in std_logic_vector (5 downto 0); --Numero de 0 a 59 input
+
+	dec: out std_logic_vector (3 downto 0); --Decenaas output
+	uni: out std_logic_vector (3 downto 0)  --Unidades output
 	);
 end sec_splitter;
 
@@ -25,25 +27,25 @@ begin
 			dec <= "0101";
 			resta <= sec - "110010";
 			uni <= resta(3 downto 0);
-		
+
 		-- 39 < x < 49
 		elsif (sec > "100111") then
 			dec <= "0100";
 			resta <= sec - "101000";
 			uni <= resta(3 downto 0);
-		
+
 		-- 29 < x < 39
 		elsif (sec > "011101") then
 			dec <= "0011";
 			resta <= sec - "011110";
 			uni <= resta(3 downto 0);
-		
+
 		-- 19 < x < 29
 		elsif (sec > "010011") then
 			dec <= "0010";
 			resta <= sec - "010100";
 			uni <= resta(3 downto 0);
-			
+
 		-- 9 < x < 19
 		elsif (sec > "001001") then
 			dec <= "0001";

@@ -2,7 +2,12 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.std_logic_unsigned.all;
 
-entity FSM_timer is 
+--Maquina de estados del timer
+--Tiene una fase inicial cuando se le introducen los numeros
+--Una fase de decrementar los segundos
+--Una de decrementar los minutos
+--Y dos para realizar el sonido
+entity FSM_timer is
 	port(
 	start : in std_logic;
 	clk : in std_logic;
@@ -27,7 +32,7 @@ signal secAux : std_logic_vector (5 downto 0) := "000000";
 
 signal minAuxB : std_logic_vector (3 downto 0) := "0000";
 signal secAuxB : std_logic_vector (5 downto 0) := "000000";
-														  
+
 
 --signal restador : std_logic_vector (5 downto 0) := "000000";
 
@@ -35,26 +40,26 @@ begin
 	process (Qp, min, sec, start, secPassed, secAuxB, minAuxB)
 	begin
 		case Qp is
-		
+
 			--Estado inicial
 			when "0000" =>
 			secAux <= sec;
 			minAux <= min;
-			
+
 			act_timer <= '1';
 			act_sonido <= '0';
-			
+
 			if (start = '0') then
 				Qn <= "0001";
 			else
 				Qn <= Qp;
 			end if;
-				
+
 			--Estado de conteo hacia abajo (segundos)
-			when "0001" =>	
+			when "0001" =>
 			act_timer <= '0';
 			act_sonido <= '0';
-			
+
 			--Si pasa un segundo, restarle uno a los segundos
 			if (secPassed = '1') then
 				secAux <= secAuxB - '1';
@@ -62,19 +67,19 @@ begin
 				secAux <= secAuxB;
 				minAux <= minAuxB;
 			end if;
-			
+
 			--Si los segundos estan en cero, ir al siguiente estado
 			if (secAuxB = "000000") then
 				Qn <= "0010";
 			else
 				Qn <= Qp;
 			end if;
-			
+
 			--Resta minuto
 			when "0010" =>
 			act_timer <= '0';
 			act_sonido <= '0';
-			
+
 			--Si los minutos y los segundos estan en cero significa que se acabo el tiempo
 			--y se va al siguiente estado
 			if (minAuxB = "0000") then
@@ -84,7 +89,7 @@ begin
 			else
 				Qn <= Qp;
 			end if;
-			
+
 			--Pero si no, solamente se le resta uno a los minutos
 			--y se ponen los segundos en 59
 			if (secPassed = '1') then
@@ -94,9 +99,9 @@ begin
 			else
 				secAux <= secAuxB;
 				minAux <= minAuxB;
-				
+
 			end if;
-			
+
 			--Sonar por dos segundos
 			when "0011" =>
 			act_timer <= '0';
@@ -107,7 +112,7 @@ begin
 			else
 				Qn <= "0011";
 			end if;
-			
+
 			when "0100" =>
 			act_timer <= '0';
 			act_sonido <= '1'; --Activar sonido
@@ -117,12 +122,12 @@ begin
 			else
 				Qn <= "0100";
 			end if;
-			
+
 			--Default
 			when others =>
 			Qn <= "0000";
 			act_timer <= '1';
-			act_sonido <= '0';	
+			act_sonido <= '0';
 			end case;
 	end process;
 	process(clk, Qn, minAux , secAux)
@@ -134,8 +139,8 @@ begin
 			min_out <= minAux;
 			sec_out <= secAux;
 		else
-		
+
 		end if;
 	end process;
-	
+
 end behavior;
